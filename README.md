@@ -15,13 +15,13 @@ This gives you a `Version` struct that you can then interact with and compare:
     v1 = semver.FromString("1.2.3")
     v2 = semver.FromString("1.3.5")
 
-    v1.LessThan(v2) // true
-    v1.GreaterThan(v2) // false
-    v1.Equal(v2) // false
-    v1.NotEqual(v2) // true
-    v1.LessThanOrEqual(v2) // true
+    v1.LessThan(v2)           // true
+    v1.GreaterThan(v2)        // false
+    v1.Equal(v2)              // false
+    v1.NotEqual(v2)           // true
+    v1.LessThanOrEqual(v2)    // true
     v2.GreaterThanOrEqual(v1) // true
-    v1.String() // 1.2.3
+    v1.String()               // 1.2.3
 
 You can also do pessimistic comparisons [like RubyGems](http://www.devalot.com/articles/2012/04/gem-versions.html):
 
