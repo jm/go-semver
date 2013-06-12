@@ -22,33 +22,33 @@ func FromString(versionString string) *Version {
 
 	if len(pieces) != 3 {
 		panic("Malformed version (too short or too long).")
-	} else {
-		version := new(Version)
-		version.Major = pieces[0]
-		version.Minor = pieces[1]
-
-		last := pieces[2]
-		build := ""
-		pre := ""
-
-		if strings.Contains(last, "+") {
-			buildPieces := strings.Split(last, "+")
-			last = buildPieces[0]
-			build = buildPieces[1]
-		}
-
-		if strings.Contains(last, "-") {
-			prePieces := strings.Split(last, "-")
-			last = prePieces[0]
-			pre = prePieces[1]
-		}
-
-		version.Patch = last
-		version.Build = build
-		version.Pre = pre
-
-		return version
 	}
+
+	version := new(Version)
+	version.Major = pieces[0]
+	version.Minor = pieces[1]
+
+	last := pieces[2]
+	build := SplitLast(&last, "+")
+	pre := SplitLast(&last, "-")
+
+	version.Patch = last
+	version.Build = build
+	version.Pre = pre
+
+	return version
+}
+
+func SplitLast(last *string, delimiter string) string {
+	value := ""
+
+	if strings.Contains(*last, delimiter) {
+		pieces := strings.Split(*last, delimiter)
+		*last = pieces[0]
+		value = pieces[1]
+	}
+
+	return value
 }
 
 // Comparison methods
