@@ -39,9 +39,7 @@ func FromString(versionString string) *Version {
 	return version
 }
 
-func SplitLast(last *string, delimiter string) string {
-	value := ""
-
+func SplitLast(last *string, delimiter string) (value string) {
 	if strings.Contains(*last, delimiter) {
 		pieces := strings.Split(*last, delimiter)
 		*last = pieces[0]
