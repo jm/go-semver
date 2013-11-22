@@ -1,6 +1,7 @@
 package semver
 
 import "testing"
+import "fmt"
 
 type TestData struct {
 	Baseline                     *Version
@@ -18,9 +19,9 @@ type TestData struct {
 }
 
 func GenerateTestVersion(v string) *Version {
-	ver, err := FromString(v)
+	ver, err := New(v)
 	if err != nil {
-
+		panic(fmt.Sprint("Failed to generate test version: ", err))
 	}
 	return ver
 }
@@ -87,7 +88,7 @@ func TestParseBuildNoPre(t *testing.T) {
 }
 
 func TestParseFailTooLong(t *testing.T) {
-	_, err := FromString("1.2.3.4.5.6")
+	_, err := New("1.2.3.4.5.6")
 	if err == nil {
 		t.Fatal("Didn't error on long input.")
 	}
@@ -98,7 +99,7 @@ func TestParseFailTooLong(t *testing.T) {
 }
 
 func TestParseFailTooShort(t *testing.T) {
-	_, err := FromString("1.2")
+	_, err := New("1.2")
 	if err == nil {
 		t.Fatal("Didn't error on short input.")
 	}
@@ -106,6 +107,36 @@ func TestParseFailTooShort(t *testing.T) {
 	if err.Error() != "semver: Malformed version (too short or too long)." {
 		t.Fatal("Wrong error: ", err)
 	}
+}
+
+func TestParseFailTooLongPanic(t *testing.T) {
+	defer func() {
+		s := recover()
+
+		if s == nil {
+			t.Fatal("Didn't panic on long input.")
+		}
+		if s.(string) != "Malformed version (too short or too long)." {
+			t.Fatal("Wrong panic: ", s)
+		}
+	}()
+
+	FromString("1.2.3.4.5.6")
+}
+
+func TestParseFailTooShortPanic(t *testing.T) {
+	defer func() {
+		s := recover()
+
+		if s == nil {
+			t.Fatal("Didn't panic on short input.")
+		}
+		if s.(string) != "Malformed version (too short or too long)." {
+			t.Fatal("Wrong panic: ", s)
+		}
+	}()
+
+	FromString("1.2")
 }
 
 func TestCompareLessThan(t *testing.T) {

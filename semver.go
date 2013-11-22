@@ -17,8 +17,10 @@ type Version struct {
 	Build string
 }
 
-// Parse a Version struct from a version string like "1.2.4".
-func FromString(versionString string) (*Version, error) {
+// Construct a new Version struct from a version string like "1.2.4".
+// If the version string cannot be parsed then this function will return
+// nil for the version and an error.
+func New(versionString string) (*Version, error) {
 	pieces := strings.Split(versionString, ".")
 
 	if len(pieces) != 3 {
@@ -38,6 +40,17 @@ func FromString(versionString string) (*Version, error) {
 	version.Pre = pre
 
 	return version, nil
+}
+
+// Parse a Version struct from a version string like "1.2.4".
+// If the version string cannot be parsed then this function will
+// panic.
+func FromString(versionString string) (version *Version, err error) {
+	version, err = New(versionString)
+	if err != nil {
+		panic("Malformed version (too short or too long).")
+	}
+	return
 }
 
 func SplitLast(last *string, delimiter string) string {
