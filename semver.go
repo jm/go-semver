@@ -3,6 +3,7 @@
 package semver
 
 import (
+	"errors"
 	"reflect"
 	"strings"
 )
@@ -17,11 +18,11 @@ type Version struct {
 }
 
 // Parse a Version struct from a version string like "1.2.4".
-func FromString(versionString string) *Version {
+func FromString(versionString string) (*Version, error) {
 	pieces := strings.Split(versionString, ".")
 
 	if len(pieces) != 3 {
-		panic("Malformed version (too short or too long).")
+		return nil, errors.New("semver: Malformed version (too short or too long).")
 	}
 
 	version := new(Version)
@@ -36,7 +37,7 @@ func FromString(versionString string) *Version {
 	version.Build = build
 	version.Pre = pre
 
-	return version
+	return version, nil
 }
 
 func SplitLast(last *string, delimiter string) string {
