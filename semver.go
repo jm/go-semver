@@ -45,8 +45,8 @@ func New(versionString string) (*Version, error) {
 // Parse a Version struct from a version string like "1.2.4".
 // If the version string cannot be parsed then this function will
 // panic.
-func FromString(versionString string) (version *Version, err error) {
-	version, err = New(versionString)
+func FromString(versionString string) (version *Version) {
+	version, err := New(versionString)
 	if err != nil {
 		panic("Malformed version (too short or too long).")
 	}
