@@ -10,6 +10,14 @@ Versions are parsed from strings like so:
     semver.FromString("1.9.0-beta1")
     // and so on...
 
+If the version parse fails it then the library will call panic(). If you prefer to simply return the error as the second
+argument then use:
+
+    semver.New("1.2.3")
+    semver.New("1.9.0-beta")
+
+The New function will return (*Version, error).
+
 This gives you a `Version` struct that you can then interact with and compare:
 
     v1 = semver.FromString("1.2.3")
@@ -21,6 +29,14 @@ This gives you a `Version` struct that you can then interact with and compare:
     v1.NotEqual(v2)           // true
     v1.LessThanOrEqual(v2)    // true
     v2.GreaterThanOrEqual(v1) // true
+    v1.String()               // 1.2.3
+
+Or using the New function:
+
+    v1, err = semver.FromString("1.2.3")
+    if err != nil {
+      // handle the error
+    }
     v1.String()               // 1.2.3
 
 You can also do pessimistic comparisons [like RubyGems](http://www.devalot.com/articles/2012/04/gem-versions.html):
