@@ -1,6 +1,9 @@
 package semver
 
-import "testing"
+import (
+	"encoding/json"
+	"testing"
+)
 
 type TestData struct {
 	Baseline                     *Version
@@ -244,5 +247,29 @@ func TestComparePessimisticGreaterThanPatchNotZero(t *testing.T) {
 
 	if versions.Baseline.PessimisticGreaterThan(versions.BaselinePessimisticPatch) != true {
 		t.Errorf("Failed to compare pessimistically")
+	}
+}
+func TestJSON(t *testing.T) {
+	versions := GenerateTestVersions()
+	exp := `{
+  "Baseline": "1.2.3",
+  "HigherMajor": "2.2.3",
+  "HigherMinor": "1.4.3",
+  "HigherPatch": "1.2.5",
+  "BaselinePre": "1.2.5-beta1",
+  "BaselinePreBuild": "1.2.5-beta1+322",
+  "BaselineBuild": "1.2.4+322",
+  "HigherBuild": "1.2.4+939",
+  "HigherPre": "1.2.5-beta4",
+  "BaselinePessimistic": "1.0.0",
+  "BaselinePessimisticPatch": "1.2.0",
+  "BaselinePessimisticZeroPatch": "1.2.1"
+}`
+	b, err := json.MarshalIndent(versions, "", "  ")
+	if err != nil {
+		t.Errorf("Cannot marshal")
+	}
+	if string(b) != exp {
+		t.Errorf("Wrong marshal value")
 	}
 }

@@ -3,6 +3,7 @@
 package semver
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
 )
@@ -37,6 +38,17 @@ func FromString(versionString string) *Version {
 	version.Pre = pre
 
 	return version
+}
+
+func (this *Version) MarshalJSON() ([]byte, error) {
+	formater := fmt.Sprintf("%s.%s.%s", this.Major, this.Minor, this.Patch)
+	if this.Pre != "" {
+		formater = formater + "-" + this.Pre
+	}
+	if this.Build != "" {
+		formater = formater + "+" + this.Build
+	}
+	return []byte(`"` + formater + `"`), nil
 }
 
 func SplitLast(last *string, delimiter string) string {
