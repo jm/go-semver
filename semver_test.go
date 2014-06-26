@@ -1,6 +1,7 @@
 package semver
 
 import "testing"
+import "fmt"
 
 type TestData struct {
 	Baseline                     *Version
@@ -17,8 +18,29 @@ type TestData struct {
 	BaselinePessimisticZeroPatch *Version
 }
 
+func GenerateTestVersion(v string) *Version {
+	ver, err := New(v)
+	if err != nil {
+		panic(fmt.Sprint("Failed to generate test version: ", err))
+	}
+	return ver
+}
+
 func GenerateTestVersions() *TestData {
-	return &TestData{FromString("1.2.3"), FromString("2.2.3"), FromString("1.4.3"), FromString("1.2.5"), FromString("1.2.5-beta1"), FromString("1.2.5-beta1+322"), FromString("1.2.4+322"), FromString("1.2.4+939"), FromString("1.2.5-beta4"), FromString("1.0.0"), FromString("1.2.0"), FromString("1.2.1")}
+	return &TestData{
+		GenerateTestVersion("1.2.3"),
+		GenerateTestVersion("2.2.3"),
+		GenerateTestVersion("1.4.3"),
+		GenerateTestVersion("1.2.5"),
+		GenerateTestVersion("1.2.5-beta1"),
+		GenerateTestVersion("1.2.5-beta1+322"),
+		GenerateTestVersion("1.2.4+322"),
+		GenerateTestVersion("1.2.4+939"),
+		GenerateTestVersion("1.2.5-beta4"),
+		GenerateTestVersion("1.0.0"),
+		GenerateTestVersion("1.2.0"),
+		GenerateTestVersion("1.2.1"),
+	}
 }
 
 func TestParse(t *testing.T) {
@@ -66,6 +88,28 @@ func TestParseBuildNoPre(t *testing.T) {
 }
 
 func TestParseFailTooLong(t *testing.T) {
+	_, err := New("1.2.3.4.5.6")
+	if err == nil {
+		t.Fatal("Didn't error on long input.")
+	}
+
+	if err.Error() != "semver: Malformed version (too short or too long)." {
+		t.Fatal("Wrong error: ", err)
+	}
+}
+
+func TestParseFailTooShort(t *testing.T) {
+	_, err := New("1.2")
+	if err == nil {
+		t.Fatal("Didn't error on short input.")
+	}
+
+	if err.Error() != "semver: Malformed version (too short or too long)." {
+		t.Fatal("Wrong error: ", err)
+	}
+}
+
+func TestParseFailTooLongPanic(t *testing.T) {
 	defer func() {
 		s := recover()
 
@@ -80,7 +124,7 @@ func TestParseFailTooLong(t *testing.T) {
 	FromString("1.2.3.4.5.6")
 }
 
-func TestParseFailTooShort(t *testing.T) {
+func TestParseFailTooShortPanic(t *testing.T) {
 	defer func() {
 		s := recover()
 
